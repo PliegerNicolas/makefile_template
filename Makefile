@@ -6,7 +6,7 @@
 #    By: nicolas <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/21 15:02:08 by nicolas           #+#    #+#              #
-#    Updated: 2023/05/21 16:50:11 by nicolas          ###   ########.fr        #
+#    Updated: 2023/05/21 20:55:27 by nicolas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@
 #* *                                 UTILS                                  * *#
 #* ************************************************************************** *#
 
-NAME			=			name
+NAME			=			default
 AR				=			ar -rcs
 CC				=			gcc
 CFLAGS			=			
@@ -26,7 +26,7 @@ RUN_PARAM		=
 
 SRCS_EXTENSION	=			.c
 SRCS_PATH		=			./srcs
-MAIN_NAME		=			main
+MAIN_NAME		=			$(NAME)
 
 SRCS_NAMES		=
 
@@ -40,7 +40,7 @@ INCLUDE_DIRS	=			includes
 #* *                                OBJECTS                                 * *#
 #* ************************************************************************** *#
 
-OBJS_PATH		=			objs
+OBJS_PATH		=			./objs
 
 MAIN			=			$(addsuffix $(SRCS_EXTENSION), $(MAIN_NAME))
 SRCS			=			$(addsuffix $(SRCS_EXTENSION), $(SRCS_NAMES))
@@ -49,6 +49,8 @@ OBJS			=			$(addprefix $(OBJS_PATH)/, ${SRCS:$(SRCS_EXTENSION)=.o})
 OBJ_MAIN		=			$(addprefix $(OBJS_PATH)/, ${MAIN:$(SRCS_EXTENSION)=.o})
 OBJS_DEPEND		=			$(addprefix $(OBJS_PATH)/, ${SRCS:$(SRCS_EXTENSION)=.d})
 OBJ_MAIN_DEPEND	=			$(addprefix $(OBJS_PATH)/, ${MAIN:$(SRCS_EXTENSION)=.d})
+
+INCLUDE_FLAGS	=			$(addprefix -I , ${INCLUDE_DIRS})
 
 #* ************************************************************************** *#
 #* *                               CONSTANTS                                * *#
@@ -63,8 +65,6 @@ NO_COLOR		=			\033[m
 #* ************************************************************************** *#
 #* *                                MAKEFILE                                * *#
 #* ************************************************************************** *#
-
-INCLUDE_FLAGS	=			$(addprefix -I , ${INCLUDE_DIRS})
 
 ifeq (noflag, $(filter noflag,$(MAKECMDGOALS)))
 	CFLAGS		+=			-Wall -Wextra
@@ -82,6 +82,10 @@ endif
 
 ifeq (santhread, $(filter santhread,$(MAKECMDGOALS)))
 	CFLAGS		+=			-fsanitize=thread
+endif
+
+ifeq (optimize, $(filter optimize,$(MAKECMDGOALS)))
+	CFLAGS		+=			-O3
 endif
 
 #* ************************************************************************** *#
@@ -127,6 +131,8 @@ sanaddress:			all
 
 santhread:			all
 
+optimize:			all
+
 # ----- #
 
-.PHONY: all clean fclean re run debug sandaddress santhread
+.PHONY: all clean fclean re run debug sandaddress santhread optimize
