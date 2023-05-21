@@ -6,7 +6,7 @@
 #    By: nicolas <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/21 15:02:08 by nicolas           #+#    #+#              #
-#    Updated: 2023/05/21 16:47:54 by nicolas          ###   ########.fr        #
+#    Updated: 2023/05/21 16:50:11 by nicolas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -113,7 +113,6 @@ re:					fclean all
 $(NAME):			${OBJS} ${OBJ_MAIN}
 	$(AR) $(NAME).a ${OBJS} ${OBJ_MAIN}
 	$(CC) $(CFLAGS) $(INCLUDE_FLAGS) $(NAME).a -o $@
-	make clean
 
 # ----- #
 
