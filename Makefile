@@ -6,7 +6,7 @@
 #    By: nicolas <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/21 15:02:08 by nicolas           #+#    #+#              #
-#    Updated: 2023/05/24 15:00:28 by nicolas          ###   ########.fr        #
+#    Updated: 2023/07/25 21:42:46 by nicolas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -135,4 +135,4 @@ optimize:			all
 
 # ----- #
 
-.PHONY: all clean fclean re run debug sanaddress santhread optimize
+.PHONY: clean fclean re run debug sanaddress santhread optimize
