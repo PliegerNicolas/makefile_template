@@ -1,138 +1,174 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: nicolas <marvin@42.fr>                     +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/05/21 15:02:08 by nicolas           #+#    #+#              #
-#    Updated: 2023/07/25 21:42:46 by nicolas          ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
+#* *************************************************************************** *#
+#* *                            GENERAL INFO                                 * *#
+#* *************************************************************************** *#
 
-#* ************************************************************************** *#
-#* *                                 UTILS                                  * *#
-#* ************************************************************************** *#
+NAME				:=		hello-world
 
-NAME			=			default
-AR				=			ar -rcs
-CC				=			gcc
-CFLAGS			=			
-RUN_PARAM		=			
+#* *************************************************************************** *#
+#* *                          COMPILATION_UTILS                              * *#
+#* *************************************************************************** *#
 
-#* ************************************************************************** *#
-#* *                                SOURCES                                 * *#
-#* ************************************************************************** *#
+CC					:=		gcc
+CC_FLAGS			=
+LIBRARY_FLAGS		=
 
-SRCS_EXTENSION	=			.c
-SRCS_PATH		=			./srcs
-MAIN_NAME		=			$(NAME)
+#* *************************************************************************** *#
+#* *                                 FILES                                   * *#
+#* *************************************************************************** *#
 
-SRCS_NAMES		=
+#* SOURCES *#
 
-#* ************************************************************************** *#
-#* *                               INCLUDES                                 * *#
-#* ************************************************************************** *#
+SOURCES_PATH		:=		./srcs
+SOURCES_EXTENSION	:=		.c
 
-INCLUDE_DIRS	=			includes
+SOURCES_NAMES		:=		main \
 
-#* ************************************************************************** *#
-#* *                                OBJECTS                                 * *#
-#* ************************************************************************** *#
+SORTED_SOURCES_NAMES:=		$(sort $(SOURCES_NAMES))
+SOURCES				:=		$(addsuffix $(SOURCES_EXTENSION), $(SORTED_SOURCES_NAMES))
 
-OBJS_PATH		=			./objs
+#* HEADERS *#
 
-MAIN			=			$(addsuffix $(SRCS_EXTENSION), $(MAIN_NAME))
-SRCS			=			$(addsuffix $(SRCS_EXTENSION), $(SRCS_NAMES))
+HEADERS_PATH		:=		./includes
+INCLUDE_FLAGS		:=		$(addprefix -I , $(HEADERS_PATH))
 
-OBJS			=			$(addprefix $(OBJS_PATH)/, ${SRCS:$(SRCS_EXTENSION)=.o})
-OBJ_MAIN		=			$(addprefix $(OBJS_PATH)/, ${MAIN:$(SRCS_EXTENSION)=.o})
-OBJS_DEPEND		=			$(addprefix $(OBJS_PATH)/, ${SRCS:$(SRCS_EXTENSION)=.d})
-OBJ_MAIN_DEPEND	=			$(addprefix $(OBJS_PATH)/, ${MAIN:$(SRCS_EXTENSION)=.d})
+#* OBJECTS *#
 
-INCLUDE_FLAGS	=			$(addprefix -I , ${INCLUDE_DIRS})
+OBJECTS_PATH		:=		./objs
+OBJECTS				:=		$(addprefix $(OBJECTS_PATH)/, $(SOURCES:$(SOURCES_EXTENSION)=.o))
 
-#* ************************************************************************** *#
-#* *                               CONSTANTS                                * *#
-#* ************************************************************************** *#
+#* DEPENDENCIES *#
 
-BLUE			=			\033[1;34m
-CYAN			=			\033[0;36m
-GREEN			=			\033[0;32m
-ORANGE			=			\033[0;33m
-NO_COLOR		=			\033[m
+DEPENDENCIES		:=		$(OBJECTS:.o=.d)
 
-#* ************************************************************************** *#
-#* *                                MAKEFILE                                * *#
-#* ************************************************************************** *#
+#* *************************************************************************** *#
+#* *                             RULE FILTERS                                * *#
+#* *************************************************************************** *#
 
 ifeq (noflag, $(filter noflag,$(MAKECMDGOALS)))
-	CFLAGS		+=			-Wall -Wextra
+	CC_FLAGS		+=		-Wall -Wextra
 else
-	CFLAGS		+=			-Wall -Wextra -Werror
+	CC_FLAGS		+=		-Wall -Wextra -Werror
 endif
 
 ifeq (debug, $(filter debug,$(MAKECMDGOALS)))
-	CFLAGS		+=			-g3
+	CC_FLAGS		+=		-g3
 endif
 
-ifeq (sanaddress, $(filter sanaddress,$(MAKECMDGOALS)))
-	CFLAGS		+=			-fsanitize=address
+ifeq (sanadd, $(filter sanadd,$(MAKECMDGOALS)))
+	CC_FLAGS		+=		-fsanitize=address -g3
 endif
 
 ifeq (santhread, $(filter santhread,$(MAKECMDGOALS)))
-	CFLAGS		+=			-fsanitize=thread
+	CC_FLAGS		+=		-fsanitize=thread -g3
 endif
 
 ifeq (optimize, $(filter optimize,$(MAKECMDGOALS)))
-	CFLAGS		+=			-O3
-endif
+	CC_FLAGS		+=		-O3
+endif	
 
-#* ************************************************************************** *#
-#* *                                 RULES                                  * *#
-#* ************************************************************************** *#
+#* *************************************************************************** *#
+#* *                              CONSTANTS                                  * *#
+#* *************************************************************************** *#
 
-all:				$(NAME)
+# Text formatting
+BOLD				:=		\033[1m
+ITALIC				:=		\033[3m
+UNDERLINE			:=		\033[4m
+STRIKETHROUGH		:=		\033[9m
 
-# ----- #
+# Color codes
+RED					:=		\033[0;31m
+GREEN				:=		\033[0;32m
+YELLOW				:=		\033[0;33m
+BLUE				:=		\033[0;34m
+PURPLE				:=		\033[0;35m
+CYAN				:=		\033[0;36m
+WHITE				:=		\033[0;37m
+RESET				:=		\033[0m
 
-$(OBJS_PATH)/%.o:	$(SRCS_PATH)/%$(SRCS_EXTENSION)
-	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -MMD -MF $(@:.o=.d) ${INCLUDE_FLAGS} -c $< -o $@
+#* *************************************************************************** *#
+#* *                               MESSAGES                                  * *#
+#* *************************************************************************** *#
 
-# ----- #
+define success_message
+	echo "✨ $(BOLD)$(GREEN)COMPILATION SUCCESSFUL$(RESET) ✨"
+endef
+
+define linking_message
+	echo "🔧 $(YELLOW)Linking $(BOLD)$(CYAN)$@ $(RESET)$(YELLOW)...$(RESET) 🔧"
+endef
+
+define deletion_of_objects_message
+	echo "❌ $(RED)Deleting $(BOLD)$(OBJECTS_PATH)$(RESET)"
+endef
+
+define deletion_of_executable
+	echo "❌ $(RED)Deleting $(BOLD)$(NAME)$(RESET) $(RED)executable$(RESET)"
+endef
+
+LAST_DIRECTORY :=
+
+define compile_message
+	@if [ "$(dir $<)" != "$(LAST_DIRECTORY)" ]; then \
+		echo "$(CYAN)$(ITALIC)Compiling files in directory $(BOLD)$(dir $<)$(RESET)"; \
+		LAST_DIRECTORY="$(dir $<)"; \
+	fi
+	@echo "    $(YELLOW)•$(RESET) $(CYAN)$(notdir $<)$(RESET)";
+	$(eval LAST_DIRECTORY := $(dir $<))
+endef
+
+#* *************************************************************************** *#
+#* *                                 RULES                                   * *#
+#* *************************************************************************** *#
+
+#* Main *#
+
+all:	$(NAME)
+
+#* Compilation *#
+
+-include $(DEPENDENCIES)
+$(NAME):	$(OBJECTS)
+	@echo -n "\n"
+	@$(call linking_message)
+	@$(CC) $(CC_FLAGS) $(INCLUDE_FLAGS) -o $@ $(OBJECTS) $(LIBRARY_FLAGS)
+	@$(call success_message)
+
+$(OBJECTS_PATH)/%.o: $(SOURCES_PATH)/%$(SOURCES_EXTENSION)
+	@mkdir -p $(dir $@)
+	@$(call compile_message)
+	@$(CC) $(CC_FLAGS) -MMD -MF $(@:.o=.d) $(INCLUDE_FLAGS) -c $< -o $@
+
+#* Clean up *#
 
 clean:
-	rm -rf $(OBJS_PATH)
+	@if [ -d $(OBJECTS_PATH) ]; then \
+		$(call deletion_of_objects_message); \
+		rm -rf $(OBJECTS_PATH); \
+	fi
 
-fclean:				clean
-	rm -f $(NAME).a
-	rm -f $(NAME)
+fclean:	clean
+	@if [ -f $(NAME) ]; then \
+		$(call deletion_of_executable); \
+		rm -f $(NAME); \
+	fi
 
-re:					fclean all
+#* Rebuild *#
 
-# ----- #
+re:	fclean all
 
--include $(OBJS_DEPEND) $(OBJ_MAIN_DEPEND)
-$(NAME):			${OBJS} ${OBJ_MAIN}
-	$(AR) $(NAME).a ${OBJS} ${OBJ_MAIN}
-	$(CC) $(CFLAGS) $(INCLUDE_FLAGS) $(NAME).a -o $@
+#* Options *#
 
-# ----- #
+noflag: 				all
 
-run:				all
-	./$(NAME) $(RUN_PARAM)
+debug:					all
 
-noflag:				all
+sanadd:					all
 
-debug:				all
+santhread:				all
 
-sanaddress:			all
+optimize:				all
 
-santhread:			all
+#* Conflicts protection *#
 
-optimize:			all
-
-# ----- #
-
-.PHONY: clean fclean re run debug sanaddress santhread optimize
+.PHONY: clean fclean re noflag debug sanadd santhread optimize
